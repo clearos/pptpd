@@ -14,7 +14,7 @@
 Summary:	PoPToP Point to Point Tunneling Server
 Name:		pptpd
 Version:	1.4.0
-Release:	2%{?dist}
+Release:	3%{?dist}
 License:	GPLv2+ and LGPLv2+
 Group:		Applications/Internet
 BuildRequires:	ppp-devel, systemd
@@ -131,6 +131,9 @@ fi
 %attr(0755,root,root) %{_sysconfdir}/rc.d/init.d/pptpd
 
 %changelog
+* Fri Apr 11 2014 Jaroslav Škarvada <jskarvad@redhat.com> - 1.4.0-3
+- Rebuilt for new ppp
+
 * Mon Nov 11 2013 Jaroslav Škarvada <jskarvad@redhat.com> - 1.4.0-2
 - Fixed license tag
   Related: rhbz#632853
