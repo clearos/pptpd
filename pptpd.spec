@@ -14,7 +14,7 @@
 Summary:	PoPToP Point to Point Tunneling Server
 Name:		pptpd
 Version:	1.4.0
-Release:	5%{?dist}
+Release:	6%{?dist}
 License:	GPLv2+ and LGPLv2+
 Group:		Applications/Internet
 BuildRequires:	ppp-devel, systemd
@@ -131,6 +131,9 @@ fi
 %attr(0755,root,root) %{_sysconfdir}/rc.d/init.d/pptpd
 
 %changelog
+* Sun Aug 17 2014 Fedora Release Engineering <rel-eng@lists.fedoraproject.org> - 1.4.0-6
+- Rebuilt for https://fedoraproject.org/wiki/Fedora_21_22_Mass_Rebuild
+
 * Wed Aug 13 2014 Jaroslav Škarvada <jskarvad@redhat.com> - 1.4.0-5
 - Rebuilt for new ppp
 
