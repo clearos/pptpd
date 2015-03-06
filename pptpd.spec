@@ -14,7 +14,7 @@
 Summary:	PoPToP Point to Point Tunneling Server
 Name:		pptpd
 Version:	1.4.0
-Release:	6%{?dist}
+Release:	7%{?dist}
 License:	GPLv2+ and LGPLv2+
 Group:		Applications/Internet
 BuildRequires:	ppp-devel, systemd
@@ -39,6 +39,7 @@ This implements a Virtual Private Networking Server (VPN) that is
 compatible with Microsoft VPN clients. It allows windows users to
 connect to an internal firewalled network using their dialup.
 
+%if 0%{?fedora} < 23
 %package sysvinit
 Summary: PoPToP Point to Point Tunneling Server
 Group: Applications/Internet
@@ -48,6 +49,7 @@ Requires(preun): /sbin/service
 
 %description sysvinit
 The SysV initscript for PoPToP Point to Point Tunneling Server.
+%endif
 
 %prep
 %setup -q
@@ -77,7 +79,9 @@ make %{?_smp_mflags} \
 	INSTALL="install -p" \
 	LIBDIR=%{buildroot}%{_libdir}/pptpd \
 	install
+%if 0%{?fedora} < 23
 install -pm 0755 pptpd.init %{buildroot}%{_sysconfdir}/rc.d/init.d/pptpd
+%endif
 install -pm 0644 samples/pptpd.conf %{buildroot}%{_sysconfdir}/pptpd.conf
 install -pm 0644 samples/options.pptpd %{buildroot}%{_sysconfdir}/ppp/options.pptpd
 install -pm 0755 tools/vpnuser %{buildroot}%{_bindir}/vpnuser
@@ -98,6 +102,7 @@ install -pm 0644 %{SOURCE2} %{buildroot}%{_sysconfdir}/sysconfig/pptpd
 %postun
 %systemd_postun_with_restart %{name}.service
 
+%if 0%{?fedora} < 23
 %post sysvinit
 /sbin/chkconfig --add pptpd >/dev/null 2>&1 ||:
 
@@ -109,6 +114,7 @@ fi
 
 %postun sysvinit
 [ "$1" -ge 1 ] && %{_initrddir}/pptpd condrestart >/dev/null 2>&1 ||:
+%endif
 
 %files
 %doc AUTHORS COPYING README* TODO ChangeLog* samples
@@ -127,10 +133,15 @@ fi
 %config(noreplace) %{_sysconfdir}/pptpd.conf
 %config(noreplace) %{_sysconfdir}/ppp/options.pptpd
 
+%if 0%{?fedora} < 23
 %files sysvinit
 %attr(0755,root,root) %{_sysconfdir}/rc.d/init.d/pptpd
+%endif
 
 %changelog
+* Fri Mar 06 2015 Adam Jackson <ajax@redhat.com> 1.4.0-7
+- Drop sysvinit subpackage from F23+
+
 * Sun Aug 17 2014 Fedora Release Engineering <rel-eng@lists.fedoraproject.org> - 1.4.0-6
 - Rebuilt for https://fedoraproject.org/wiki/Fedora_21_22_Mass_Rebuild
 
