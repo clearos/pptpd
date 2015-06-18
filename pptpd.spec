@@ -14,7 +14,7 @@
 Summary:	PoPToP Point to Point Tunneling Server
 Name:		pptpd
 Version:	1.4.0
-Release:	7%{?dist}
+Release:	8%{?dist}
 License:	GPLv2+ and LGPLv2+
 Group:		Applications/Internet
 BuildRequires:	ppp-devel, systemd
@@ -139,6 +139,9 @@ fi
 %endif
 
 %changelog
+* Thu Jun 18 2015 Fedora Release Engineering <rel-eng@lists.fedoraproject.org> - 1.4.0-8
+- Rebuilt for https://fedoraproject.org/wiki/Fedora_23_Mass_Rebuild
+
 * Fri Mar 06 2015 Adam Jackson <ajax@redhat.com> 1.4.0-7
 - Drop sysvinit subpackage from F23+
 
