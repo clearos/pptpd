@@ -1,6 +1,6 @@
 # Available rpmbuild options:
 #
-# --without	libwrap
+# --with	libwrap
 # --without	bcrelay
 #
 
@@ -22,11 +22,12 @@ URL:		http://poptop.sourceforge.net/
 Source0:	http://downloads.sf.net/poptop/pptpd-%{version}.tar.gz
 Source1:	pptpd.service
 Source2:	pptpd.sysconfig
+Source3:	pptpd.conf
 %global pppver %((%{__awk} '/^#define VERSION/ { print $NF }' /usr/include/pppd/patchlevel.h 2>/dev/null||echo none)|/usr/bin/tr -d '"')
 Requires:	ppp = %{pppver}
 Requires:	perl
 
-%if %{?_without_libwrap:0}%{!?_without_libwrap:1}
+%if %{?_with_libwrap:1}%{!?_with_libwrap:0}
 BuildRequires:	tcp_wrappers-devel
 %endif
 
@@ -57,8 +58,8 @@ perl -pi -e 's,/usr/lib/pptpd,%{_libdir}/pptpd,;' pptpctrl.c
 
 %build
 %configure \
-	%{!?_without_libwrap:--with-libwrap} \
-	%{?_without_libwrap:--without-libwrap} \
+	%{!?_with_libwrap:--without-libwrap} \
+	%{?_with_libwrap:--with-libwrap} \
 	%{!?_without_bcrelay:--enable-bcrelay} \
 	%{?_without_bcrelay:--disable-bcrelay}
 (echo '#undef VERSION'; echo '#include <pppd/patchlevel.h>') >> plugins/patchlevel.h
@@ -78,7 +79,7 @@ make %{?_smp_mflags} \
 	LIBDIR=%{buildroot}%{_libdir}/pptpd \
 	install
 install -pm 0755 pptpd.init %{buildroot}%{_sysconfdir}/rc.d/init.d/pptpd
-install -pm 0644 samples/pptpd.conf %{buildroot}%{_sysconfdir}/pptpd.conf
+install -pm 0644 %{SOURCE3} %{buildroot}%{_sysconfdir}/pptpd.conf
 install -pm 0644 samples/options.pptpd %{buildroot}%{_sysconfdir}/ppp/options.pptpd
 install -pm 0755 tools/vpnuser %{buildroot}%{_bindir}/vpnuser
 install -pm 0755 tools/vpnstats.pl %{buildroot}%{_bindir}/vpnstats.pl
