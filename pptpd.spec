@@ -14,7 +14,7 @@
 Summary:	PoPToP Point to Point Tunneling Server
 Name:		pptpd
 Version:	1.4.0
-Release:	2%{?dist}
+Release:	2%{?dist}.1
 License:	GPLv2+ and LGPLv2+
 Group:		Applications/Internet
 BuildRequires:	ppp-devel, systemd
@@ -40,16 +40,6 @@ This implements a Virtual Private Networking Server (VPN) that is
 compatible with Microsoft VPN clients. It allows windows users to
 connect to an internal firewalled network using their dialup.
 
-%package sysvinit
-Summary: PoPToP Point to Point Tunneling Server
-Group: Applications/Internet
-BuildArch: noarch
-Requires: %{name} = %{version}-%{release}
-Requires(preun): /sbin/service
-
-%description sysvinit
-The SysV initscript for PoPToP Point to Point Tunneling Server.
-
 %prep
 %setup -q
 
@@ -66,7 +56,6 @@ perl -pi -e 's,/usr/lib/pptpd,%{_libdir}/pptpd,;' pptpctrl.c
 make CFLAGS='-fno-builtin -fPIC -DSBINDIR=\"%{_sbindir}\" %{optflags} %{?harden}'
 
 %install
-mkdir -p %{buildroot}%{_sysconfdir}/rc.d/init.d
 mkdir -p %{buildroot}%{_sysconfdir}/ppp
 mkdir -p %{buildroot}%{_bindir}
 mkdir -p %{buildroot}%{_mandir}/man{5,8}
@@ -78,7 +67,6 @@ make %{?_smp_mflags} \
 	INSTALL="install -p" \
 	LIBDIR=%{buildroot}%{_libdir}/pptpd \
 	install
-install -pm 0755 pptpd.init %{buildroot}%{_sysconfdir}/rc.d/init.d/pptpd
 install -pm 0644 %{SOURCE3} %{buildroot}%{_sysconfdir}/pptpd.conf
 install -pm 0644 samples/options.pptpd %{buildroot}%{_sysconfdir}/ppp/options.pptpd
 install -pm 0755 tools/vpnuser %{buildroot}%{_bindir}/vpnuser
@@ -99,18 +87,6 @@ install -pm 0644 %{SOURCE2} %{buildroot}%{_sysconfdir}/sysconfig/pptpd
 %postun
 %systemd_postun_with_restart %{name}.service
 
-%post sysvinit
-/sbin/chkconfig --add pptpd >/dev/null 2>&1 ||:
-
-%preun sysvinit
-if [ "$1" = 0 ]; then
-    %{_initrddir}/pptpd stop >/dev/null 2>&1 ||:
-    /sbin/chkconfig --del pptpd >/dev/null 2>&1 ||:
-fi
-
-%postun sysvinit
-[ "$1" -ge 1 ] && %{_initrddir}/pptpd condrestart >/dev/null 2>&1 ||:
-
 %files
 %doc AUTHORS COPYING README* TODO ChangeLog* samples
 %{_sbindir}/pptpd
@@ -128,10 +104,10 @@ fi
 %config(noreplace) %{_sysconfdir}/pptpd.conf
 %config(noreplace) %{_sysconfdir}/ppp/options.pptpd
 
-%files sysvinit
-%attr(0755,root,root) %{_sysconfdir}/rc.d/init.d/pptpd
-
 %changelog
+* Mon Jul 13 2015 ClearFoundation <developer@clearfoundation.com> - 1.4.0-2.clear
+- Customized for ClearOS
+
 * Mon Nov 11 2013 Jaroslav Škarvada <jskarvad@redhat.com> - 1.4.0-2
 - Fixed license tag
   Related: rhbz#632853
